@@ -10,10 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line copy.h"
-# include <fcntl.h>
+#include "get_next_line.h"
+#include <fcntl.h>
 
-int	main()
+int	main(void)
 {
 	int		fd;
 	char	*line;
@@ -22,8 +22,8 @@ int	main()
 	while (1)
 	{
 		line = get_next_line(fd);
-		if (line = NULL)
-			break;
+		if (line == NULL)
+			break ;
 		printf("%s", line);
 		free(line);
 	}

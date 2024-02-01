@@ -13,9 +13,17 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-#include <unistd.h>
+# include <unistd.h>
 
-char 	*get_next_line(int fd);
-char	*read_store(char **stored, int fd);
+# ifndef BUFFER_SIZE
+
+BUFFER_SIZE = 5;
+# endif
+
+char	*get_next_line(int fd);
+char	*read_store(char *stored, int fd);
+int		no_new_line_check(char *stored);
+void	copier(char *add, char *store, char *buff, int b, char *line);
+void	adder(char *buffer, char *stored, long s, int red, char *lin);
 
 #endif

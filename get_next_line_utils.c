@@ -12,69 +12,69 @@
 
 #include "get_next_line.h"
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-	static	char	*stored;
-	char			*line;
+	static char	*stored;
+	char		*line;
+	char		*tmp;
 
 	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, line, 0) < 0)
 		return (NULL);
 	stored = NULL;
-	read_store(&stored, fd, line);
+	tmp = read_store(stored, fd);
 	line = stored;
+	stored = tmp;
+	free (tmp);
 	return (line);
 }
 
-void	read_store(char **stored, int fd, char *line)
+char	*read_store(char *stored, int fd)
 {
 	char	*buf;
 	int		red;
-	long 	size;
+	long	size;
+	char	*lefto;
 
 	buf = NULL;
 	size = 0;
 	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
-		return;
-	while (new_line_check(*stored) && red != 0)
+		return ;
+	while (no_new_line_check(stored) && red != 0)
 	{
-		red = (int)read(fd , buf, BUFFER_SIZE);
-		if ((*stored == NULL && red == 0) || red < 0)
+		red = (int)read(fd, buf, BUFFER_SIZE);
+		if ((stored == NULL && red == 0) || red < 0)
 		{
 			free(buf);
-			return ;
+			return (NULL);
 		}
 		buf[red] = '\0';
 		size += red;
-		adder(buf, stored, size, red; line);
+		lefto = adder(buf, stored, size, red);
 	}
+	return (lefto);
 }
 
-void	adder(char *buffer, char *stored, long s, int red, char *lin)
+char	*adder(char *buffer, char *stored, long s, int red)
 {
 	char	*added;
-	int		i;
-	int		bs;
+	int		bnl;
 
-	i = red;
-	bs = 0;
-	while (buffer[j] != '\n' && buffer[j] != '\0')
-	{
-		bs++;
-		i--;
-	}	
-	s -= i;
+	bnl = 0;
+	while (buffer[bnl] != '\n' && buffer[bnl] != '\0')
+		bnl++;
+	s -= (BUFFER_SIZE - bnl);
 	added = malloc(sizeof(char) * s);
 	if (!added)
 		return ;
-	copier(added, stored, buffer, bs);
-	return ;
-} 
+	return (copier(added, stored, buffer, bnl));
+}
 
-void	copier(char *add, char *store, char *buff, int b)
+char	*copier(char *add, char *store, char *buff, int b)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
+	char	*leftover;
 
 	i = 0;
 	j = 0;
@@ -83,14 +83,30 @@ void	copier(char *add, char *store, char *buff, int b)
 		add[i] = store[i];
 		i++;
 	}
+	leftover = malloc(sizeof(char) * (b + 1));
 	while (b > 0)
 	{
 		add[i + j] = buff[j];
 		j++;
 		b--;
 	}
-	free (store);
+	add[i + j] = '\0';
 	store = add;
+	leftover = buff + j;
 	free (add);
-	return ;
+	return (leftover);
+}
+
+int	no_new_line_check(char *stored)
+{
+	int	i;
+
+	i = 0;
+	while (stored[i] != '\0')
+	{
+		if (stored[i] == '\n')
+			return (0);
+		i++;
+	}
+	return (1);
 }
