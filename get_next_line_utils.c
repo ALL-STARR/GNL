@@ -24,7 +24,6 @@ char	*get_next_line(int fd)
 	tmp = read_store(stored, fd);
 	line = stored;
 	stored = tmp;
-	free (tmp);
 	return (line);
 }
 
@@ -66,7 +65,7 @@ char	*adder(char *buffer, char *stored, long s, int red)
 	s -= (BUFFER_SIZE - bnl);
 	added = malloc(sizeof(char) * s);
 	if (!added)
-		return ;
+		return (NULL);
 	return (copier(added, stored, buffer, bnl));
 }
 
@@ -74,16 +73,14 @@ char	*copier(char *add, char *store, char *buff, int b)
 {
 	int		i;
 	int		j;
-	char	*leftover;
 
 	i = 0;
 	j = 0;
-	while (store[i] != '\0')
+	while (store[i] != '\0' || store != NULL)
 	{
 		add[i] = store[i];
 		i++;
 	}
-	leftover = malloc(sizeof(char) * (b + 1));
 	while (b > 0)
 	{
 		add[i + j] = buff[j];
@@ -92,9 +89,7 @@ char	*copier(char *add, char *store, char *buff, int b)
 	}
 	add[i + j] = '\0';
 	store = add;
-	leftover = buff + j;
-	free (add);
-	return (leftover);
+	return (buff + j);
 }
 
 int	no_new_line_check(char *stored)
@@ -108,5 +103,5 @@ int	no_new_line_check(char *stored)
 			return (0);
 		i++;
 	}
-	return (1);
+	return (i);
 }
