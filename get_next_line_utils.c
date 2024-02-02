@@ -88,6 +88,8 @@ char	*copier(char *add, char *store, char *buff, int b)
 		b--;
 	}
 	add[i + j] = '\0';
+	if (store != NULL)
+		free (store);
 	store = add;
 	return (buff + j);
 }
