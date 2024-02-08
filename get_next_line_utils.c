@@ -23,6 +23,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	stored = NULL;
 	tmp = read_store(stored, fd);
+	printf("tmp is %s\n", tmp);
 	line = stored;
 	stored = tmp;
 	return (line);
@@ -37,6 +38,7 @@ char	*read_store(char *stored, int fd)
 
 	buf = NULL;
 	size = 0;
+	red = 1;
 	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
 		return (NULL);
@@ -51,6 +53,7 @@ char	*read_store(char *stored, int fd)
 		buf[red] = '\0';
 		size += red;
 		lefto = adder(buf, stored, size, red);
+		printf("lefto is %s\n", lefto);
 	}
 	return (lefto);
 }
@@ -77,10 +80,14 @@ char	*copier(char *add, char *store, char *buff, int b)
 
 	i = 0;
 	j = 0;
-	while (store[i] != '\0' || store != NULL)
+	if (store != NULL)
 	{
-		add[i] = store[i];
-		i++;
+		while (store[i] != '\0')
+		{
+			add[i] = store[i];
+			i++;
+		}
+		free (store);
 	}
 	while (b > 0)
 	{
@@ -89,9 +96,9 @@ char	*copier(char *add, char *store, char *buff, int b)
 		b--;
 	}
 	add[i + j] = '\0';
-	if (store != NULL)
-		free (store);
+	printf("add is %s ", add);
 	store = add;
+	printf("and buff is %s\n", buff + j);
 	return (buff + j);
 }
 
@@ -100,11 +107,13 @@ int	no_new_line_check(char *stored)
 	int	i;
 
 	i = 0;
+	if (stored == NULL)
+		return (1);
 	while (stored[i] != '\0')
 	{
 		if (stored[i] == '\n')
 			return (0);
 		i++;
 	}
-	return (i);
+	return (1);
 }
