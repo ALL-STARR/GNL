@@ -18,6 +18,7 @@ char	*get_next_line(int fd)
 	char		*line;
 	char		*tmp;
 
+	line = NULL;
 	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, line, 0) < 0)
 		return (NULL);
 	stored = NULL;
@@ -38,7 +39,7 @@ char	*read_store(char *stored, int fd)
 	size = 0;
 	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
-		return ;
+		return (NULL);
 	while (no_new_line_check(stored) && red != 0)
 	{
 		red = (int)read(fd, buf, BUFFER_SIZE);
@@ -60,7 +61,7 @@ char	*adder(char *buffer, char *stored, long s, int red)
 	int		bnl;
 
 	bnl = 0;
-	while (buffer[bnl] != '\n' && buffer[bnl] != '\0')
+	while (buffer[bnl] != '\n' && buffer[bnl] != '\0' && red--)
 		bnl++;
 	s -= (BUFFER_SIZE - bnl);
 	added = malloc(sizeof(char) * s);
