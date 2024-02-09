@@ -40,11 +40,12 @@ char	*read_store(char *store, int fd)
 
 	i = 0;
 	size = 0;
-	leftover = NULL;
+	red = 1;
+	lefto = NULL;
 	buffer = malloc(sizeof(char) * BUFFER_SIZE);
 	if (!buffer)
 		return (NULL);
-	while (!has_new_line(store) && red > 0)
+	while (has_new_line(store) == 0 && red > 0)
 	{
 		red = (int)read(fd, buffer, BUFFER_SIZE);
 		if (red <= 0)
@@ -81,7 +82,7 @@ char	*holder(char *stor, char *buf, long siz)
 	return (leftover);
 }
 
-void	filler(char *to_fill, char *filler)
+void	filler(char *to_fill, char *filler, long siz)
 {
 	int	i;
 
@@ -96,7 +97,7 @@ void	filler(char *to_fill, char *filler)
 		to_fill = malloc(sizeof(char) * i);
 	}
 	if (!to_fill)
-		return (NULL);
+		return ;
 	i = 0;
 	while (filler[i] != '\0')
 	{
