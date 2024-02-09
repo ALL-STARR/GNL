@@ -25,6 +25,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	tmp = read_store(stored, fd);
 	line = stored;
+	free(stored);
 	stored = tmp;
 	return (line);
 }
@@ -35,7 +36,7 @@ char	*read_store(char *store, int fd)
 	int		red;
 	long	size;
 	char	*buffer;
-	char	*leftover;
+	char	*lefto;
 
 	i = 0;
 	size = 0;
@@ -43,69 +44,65 @@ char	*read_store(char *store, int fd)
 	buffer = malloc(sizeof(char) * BUFFER_SIZE);
 	if (!buffer)
 		return (NULL);
-	while (!has_new_line(store))
+	while (!has_new_line(store) && red > 0)
 	{
 		red = (int)read(fd, buffer, BUFFER_SIZE);
 		if (red <= 0)
-		{
 			free(buffer);
-			return (NULL);
-		}
 		size += red;
-		leftover = malloker(store, buffer, size);
+		buffer[red] = '\0';
+		lefto = holder(store, buffer, size);
 	}
-	return (leftover);
+	return (lefto);
 }
 
-char	*malloker(char *stor, char *buf, long siz)
+char	*holder(char *stor, char *buf, long siz)
 {
-	char	*left;
 	char	*holder;
-	int		i;
 	int		max;
+	char	*leftover;
 
-	i = 0;
 	if (has_new_line(buf) == 0)
 		max = BUFFER_SIZE;
 	else
 		max = has_new_line(buf);
 	siz -= (BUFFER_SIZE - max);
 	if (siz <= BUFFER_SIZE)
-		stor = malloc(sizeof(char) * siz);
+	{
+		stor = NULL;
+		holder = malloc(sizeof(char) * siz);
+	}
+	else
+		holder = malloc(sizeof(char) * siz);
+	if(!holder)
+		return (NULL);
+	leftover = adder(holder, stor, buf, siz);
+	filler(stor, holder, siz);
+	return (leftover);
+}
+
+void	filler(char *to_fill, char *filler)
+{
+	int	i;
+
+	i = 0;
+	while (filler[i] != '\0')
+		i++;
+	if (siz <= BUFFER_SIZE)
+		to_fill = malloc(sizeof(char) * i);
 	else
 	{
-
-		holder = malloc(sizeof(char) * siz);
-		if (!holder)
-			return (NULL);
-		holder = adder(holder, stor);
-		free(stor);
+		free(to_fill);
+		to_fill = malloc(sizeof(char) * i);
 	}
-	if(!stor)
+	if (!to_fill)
 		return (NULL);
-	return (adder(stor, buf));
-}
-
-char	*adder(char *sto, char *bu)
-{
-	int	i;
-	int	j;
-
 	i = 0;
-	j = 0;
-	while (sto)
-}
-
-int	has_new_line(char	*ptr)
-{
-	int	i;
-
-	i = 0;
-	while (ptr[i] != '\0')
+	while (filler[i] != '\0')
 	{
-		if (ptr[i] == '\n')
-			return (i);
+		to_fill[i] = filler[i];
 		i++;
 	}
-	return (0);
+	free(filler);
+	return ;
 }
