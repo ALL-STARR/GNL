@@ -10,16 +10,21 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "get_next_line.h"
+
 int	has_new_line(char	*ptr)
 {
 	int	i;
 
 	i = 0;
-	while (ptr[i] != '\0')
+	if (ptr != 0)
 	{
-		if (ptr[i] == '\n')
+		while (ptr[i] != '\0')
+		{
+			if (ptr[i] == '\n')
 			return (i);
-		i++;
+			i++;
+		}
 	}
 	return (0);
 }
@@ -31,10 +36,13 @@ char	*adder(char *hold, char *stored, char *buffer, int maximum)
 
 	i = 0;
 	j = 0;
-	while (stored[i] != '\0')
+	if (stored != 0)
 	{
-		hold[i] = stored[i];
-		i++;
+		while (stored[i] != '\0')
+		{
+			hold[i] = stored[i];
+			i++;
+		}
 	}
 	while (buffer[i] != '\0' && maximum > 0)
 	{

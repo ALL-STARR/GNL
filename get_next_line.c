@@ -10,35 +10,28 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include <unistd.h>
-# include <stdlib.h>
-# include <stdio.h>
+#include "get_next_line.h"
 
 char	*get_next_line(int fd)
 {
-	char	*stored;
-	char	*line;
-	char	*tmp;
+	static char	stored[BUFFER_SIZE];
+	char		*line;
+	char		*tmp;
 
 	line = NULL;
 	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, line, 0) < 0)
 		return (NULL);
 	tmp = read_store(stored, fd);
-	line = stored;
-	free(stored);
-	stored = tmp;
 	return (line);
 }
 
 char	*read_store(char *store, int fd)
 {
-	int		i;
 	int		red;
 	long	size;
 	char	*buffer;
 	char	*lefto;
 
-	i = 0;
 	size = 0;
 	red = 1;
 	lefto = NULL;
