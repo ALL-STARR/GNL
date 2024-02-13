@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/09 02:51:19 by marvin            #+#    #+#             */
-/*   Updated: 2024/02/09 02:51:19 by marvin           ###   ########.fr       */
+/*   Created: 2024/02/13 15:23:38 by marvin            #+#    #+#             */
+/*   Updated: 2024/02/13 15:23:38 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,88 +15,107 @@
 char	*get_next_line(int fd)
 {
 	static char	stored[BUFFER_SIZE];
+	static int	first = 1;
 	char		*line;
 	char		*tmp;
 
 	line = NULL;
 	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, line, 0) < 0)
 		return (NULL);
-	tmp = read_store(stored, fd);
+	line = read_store(stored, fd, &first);
+
 	return (line);
 }
 
-char	*read_store(char *store, int fd)
+char	*read_store(char *stor, int fd, int *first)
 {
 	int		red;
 	long	size;
-	char	*buffer;
-	char	*lefto;
+	char	*line;
+	int		newline;
 
 	size = 0;
 	red = 1;
-	lefto = NULL;
-	buffer = malloc(sizeof(char) * BUFFER_SIZE);
-	if (!buffer)
-		return (NULL);
-	while (has_new_line(store) == 0 && red > 0)
+	newline = 0;
+	while (red > 0 && !newline)
 	{
-		red = (int)read(fd, buffer, BUFFER_SIZE);
-		if (red <= 0)
-			free(buffer);
+		red = (int)read(fd, stor, BUFFER_SIZE);
 		size += red;
-		buffer[red] = '\0';
-		lefto = holder(store, buffer, size);
+		stor[red] = '\0';
+		line = holder(size, stor, line, &newline);
 	}
-	return (lefto);
+	return (line);
 }
 
-char	*holder(char *stor, char *buf, long siz)
+char	*holder(long size,char *stor, char *line, int *nl)
 {
-	char	*holder;
 	int		max;
-	char	*leftover;
+	char	*hold;
 
-	if (has_new_line(buf) == 0)
-		max = BUFFER_SIZE;
-	else
-		max = has_new_line(buf);
-	siz -= (BUFFER_SIZE - max);
-	if (siz <= BUFFER_SIZE)
+	max = BUFFER_SIZE;
+	if (!(has_new_line(stor) == 0))
 	{
-		stor = NULL;
-		holder = malloc(sizeof(char) * siz);
+		max = has_new_line(stor);
+		*nl = 1;
 	}
-	else
-		holder = malloc(sizeof(char) * siz);
-	if(!holder)
+	size -= (BUFFER_SIZE - max);
+	hold = malloc(sizeof(char) * size);
+	if (!hold)
 		return (NULL);
-	leftover = adder(holder, stor, buf, siz);
-	filler(stor, holder, siz);
-	return (leftover);
+	line = malloc(sizeof(char) * size);
+	if (!line)
+		return (NULL);
+	adder(line, stor);
+	return (filler(holder, line););
 }
 
-void	filler(char *to_fill, char *filler, long siz)
+void	adder(char *base, char *to_add)
+{
+	int	i;
+	int j;
+
+	i = 0;
+	j = 0;
+	while (base && base[i] != '\0')
+		i++;
+	while (to_add[j] != '\0' && to_add != '\n')
+	{
+		base[i + j] = to_add[j];
+		j++;
+	}
+	if (base[i + j] == '\n')
+		base[i + j] = '\n';
+	else
+		base[i + j] = '\0';
+	free(base);
+}
+
+char	*filler(char *to_fill, char *fill)
 {
 	int	i;
 
 	i = 0;
-	while (filler[i] != '\0')
-		i++;
-	if (siz <= BUFFER_SIZE)
-		to_fill = malloc(sizeof(char) * i);
-	else
+	while (fill[i] != '\0')
 	{
-		free(to_fill);
-		to_fill = malloc(sizeof(char) * i);
+		to_fill[i] = fill[i];
+		i++;
 	}
-	if (!to_fill)
-		return ;
+
+}
+
+int	has_new_line(char	*ptr)
+{
+	int	i;
+
 	i = 0;
-	while (filler[i] != '\0')
+	if (ptr != 0)
 	{
-		to_fill[i] = filler[i];
-		i++;
+		while (ptr[i] != '\0')
+		{
+			if (ptr[i] == '\n')
+			return (i);
+			i++;
+		}
 	}
-	free(filler);
-	return ;
+	return (0);
 }
