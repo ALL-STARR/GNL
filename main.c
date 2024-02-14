@@ -19,14 +19,12 @@ int	main(void)
 	char	*line;
 
 	fd = open("test.txt", O_RDONLY);
-	printf("%i\n", fd);
 	while (1)
 	{
 		line = get_next_line(fd);
 		if (line == NULL)
 			break ;
-		printf("%s\n", line);
-		free(line);
+		printf("%s", line);
 	}
 	return (0);
 }

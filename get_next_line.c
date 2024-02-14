@@ -14,9 +14,8 @@
 
 char	*get_next_line(int fd)
 {
-	static char	stored[BUFFER_SIZE];
+	static char	stored[BUFFER_SIZE + 1];
 	char		*line;
-	char		*tmp;
 
 	line = NULL;
 	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, line, 0) < 0)
@@ -36,13 +35,16 @@ char	*read_store(char *stor, int fd)
 	size = 0;
 	red = 1;
 	newline = 0;
-	while (red > 0 && !newline)
+	line = NULL;
+	while (red > 0 && newline == 0)
 	{
 		red = (int)read(fd, stor, BUFFER_SIZE);
 		size += red;
 		stor[red] = '\0';
 		line = holder(size, stor, line, &newline);
 	}
+	if (red == 0)
+		return (NULL);
 	return (line);
 }
 
@@ -52,18 +54,25 @@ char	*holder(long size,char *stor, char *line, int *nl)
 	char	*hold;
 
 	max = BUFFER_SIZE;
+	hold = NULL;
 	if (!(has_new_line(stor) == 0))
 	{
 		max = has_new_line(stor);
 		*nl = 1;
 	}
-	size -= (BUFFER_SIZE - max) - *nl;
-	hold = malloc(sizeof(char) * size);
-	if (!hold)
+	size -= (BUFFER_SIZE - max) - *nl - 1;
+	if (size > 0)
+	{
+		if (size > BUFFER_SIZE)
+			free(hold);
+		hold = malloc(sizeof(char) * size);
+		if (!hold)
+			return (NULL);
+	}
+	else
 		return (NULL);
 	filler(hold, line);
 	adder(hold, stor);
-	free(hold);
 	return (hold);
 }
 
@@ -74,9 +83,9 @@ void	adder(char *base, char *to_add)
 
 	i = 0;
 	j = 0;
-	while (base && base[i] != '\0')
+	while (base[i] != '\0')
 		i++;
-	while (to_add[j] != '\0' && to_add != '\n')
+	while (to_add[j] != '\0' && to_add[j] != '\n')
 	{
 		base[i + j] = to_add[j];
 		j++;
@@ -88,7 +97,6 @@ void	adder(char *base, char *to_add)
 	}
 	else
 		base[i + j] = '\0';
-	free(base);
 }
 
 char	*filler(char *to_fill, char *fill)
@@ -98,7 +106,7 @@ char	*filler(char *to_fill, char *fill)
 	i = 0;
 	if (!fill)
 	{
-		*to_fill = '\0'
+		*to_fill = '\0';
 		return (to_fill);
 	}
 	while (fill[i] != '\0')
@@ -106,6 +114,7 @@ char	*filler(char *to_fill, char *fill)
 		to_fill[i] = fill[i];
 		i++;
 	}
+	to_fill[i] = '\0';
 	return (to_fill);
 }
 
@@ -119,7 +128,7 @@ int	has_new_line(char	*ptr)
 		while (ptr[i] != '\0')
 		{
 			if (ptr[i] == '\n')
-				return (i);
+				return (i + 1);
 			i++;
 		}
 	}
