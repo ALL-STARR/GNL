@@ -23,7 +23,7 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, line, 0) < 0)
 		return (NULL);
 	line = read_store(stored, fd, &first);
-
+	filler(stored, stored + has_new_line(stored));
 	return (line);
 }
 
@@ -62,11 +62,10 @@ char	*holder(long size,char *stor, char *line, int *nl)
 	hold = malloc(sizeof(char) * size);
 	if (!hold)
 		return (NULL);
-	line = malloc(sizeof(char) * size);
-	if (!line)
-		return (NULL);
-	adder(line, stor);
-	return (filler(holder, line););
+	filler(hold, line);
+	adder(hold, stor);
+	free(hold);
+	return (hold);
 }
 
 void	adder(char *base, char *to_add)
@@ -95,12 +94,17 @@ char	*filler(char *to_fill, char *fill)
 	int	i;
 
 	i = 0;
+	if (!fill)
+	{
+		*to_fill = '\0'
+		return (to_fill);
+	}
 	while (fill[i] != '\0')
 	{
 		to_fill[i] = fill[i];
 		i++;
 	}
-
+	return (to_fill);
 }
 
 int	has_new_line(char	*ptr)
@@ -113,7 +117,7 @@ int	has_new_line(char	*ptr)
 		while (ptr[i] != '\0')
 		{
 			if (ptr[i] == '\n')
-			return (i);
+				return (i);
 			i++;
 		}
 	}
