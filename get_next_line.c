@@ -57,7 +57,7 @@ char	*holder(long size,char *stor, char *line, int *nl)
 		max = has_new_line(stor);
 		*nl = 1;
 	}
-	size -= (BUFFER_SIZE - max);
+	size -= (BUFFER_SIZE - max) - *nl;
 	hold = malloc(sizeof(char) * size);
 	if (!hold)
 		return (NULL);
@@ -82,7 +82,11 @@ void	adder(char *base, char *to_add)
 		j++;
 	}
 	if (base[i + j] == '\n')
+	{
 		base[i + j] = '\n';
+		base[i + j + 1] = '\0';
+	}
+		
 	else
 		base[i + j] = '\0';
 	free(base);
