@@ -15,19 +15,18 @@
 char	*get_next_line(int fd)
 {
 	static char	stored[BUFFER_SIZE];
-	static int	first = 1;
 	char		*line;
 	char		*tmp;
 
 	line = NULL;
 	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, line, 0) < 0)
 		return (NULL);
-	line = read_store(stored, fd, &first);
+	line = read_store(stored, fd);
 	filler(stored, stored + has_new_line(stored));
 	return (line);
 }
 
-char	*read_store(char *stor, int fd, int *first)
+char	*read_store(char *stor, int fd)
 {
 	int		red;
 	long	size;
