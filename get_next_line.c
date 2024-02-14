@@ -81,12 +81,11 @@ void	adder(char *base, char *to_add)
 		base[i + j] = to_add[j];
 		j++;
 	}
-	if (base[i + j] == '\n')
+	if (to_add[j] == '\n')
 	{
 		base[i + j] = '\n';
 		base[i + j + 1] = '\0';
 	}
-		
 	else
 		base[i + j] = '\0';
 	free(base);
