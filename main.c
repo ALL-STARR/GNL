@@ -17,14 +17,18 @@ int	main(void)
 {
 	int		fd;
 	char	*line;
+	int		i;
 
+	i = 3;
 	fd = open("test.txt", O_RDONLY);
-	while (1)
+	while (i)
 	{
 		line = get_next_line(fd);
 		if (line == NULL)
 			break ;
 		printf("%s", line);
+		free(line);
+		i--;
 	}
 	return (0);
 }
