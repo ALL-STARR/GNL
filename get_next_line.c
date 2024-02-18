@@ -55,27 +55,26 @@ char	*holder(long size, char *stor, char *line, int *nl)
 {
 	int		max;
 	char	*hold;
+	int		i;
 
+	i = 0;
 	max = BUFFER_SIZE;
 	hold = NULL;
+	if (size <= BUFFER_SIZE && line != NULL)
+		while (line[i] != '\0')
+			i++;
 	if (!(has_new_line(stor) == 0))
 	{
 		max = has_new_line(stor);
 		*nl = 1;
 	}
-	size -= (BUFFER_SIZE - max) - *nl - 2;
-	if (size > 0)
-	{
-		if (size > BUFFER_SIZE + 1)
-			free(hold);
-		hold = malloc(sizeof(char) * size);
-		if (!hold)
-			return (NULL);
-	}
-	else
+	size -= (BUFFER_SIZE - max) - *nl;
+	hold = malloc(sizeof(char) * (size + 1 + i));
+	if (!hold)
 		return (NULL);
 	filler(hold, line);
 	adder(hold, stor);
+	free(line);
 	return (hold);
 }
 
