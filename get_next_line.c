@@ -19,120 +19,42 @@ char	*get_next_line(int fd)
 	static int	not_first = 0;
 
 	line = NULL;
-	if (fd < 0 || BUFFER_SIZE < 0 || read(fd, line, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, line, 0) < 0)
+	{
+		eraser(stored, BUFFER_SIZE);
 		return (NULL);
+	}
 	line = read_store(stored, fd, &not_first);
-	filler(stored, stored + has_new_line(stored));
+	if (!line)
+		return (NULL);
+	filler(stored, stored + str_length(stored));
 	return (line);
 }
 
-char	*read_store(char *stor, int fd, int	*nf)
-{
-	static int		red = 1;
-	long			size;
-	char			*line;
-	int				newline;
-
-	size = 0;
-	newline = 0;
-	line = NULL;
-	if (red == 0)
-		return (NULL);
-	if (*nf)
-		line = holder(BUFFER_SIZE, stor, line, &newline);
-	*nf = 1;
-	while (red > 0 && newline == 0)
-	{
-		red = (int)read(fd, stor, BUFFER_SIZE);
-		size += red;
-		stor[red] = '\0';
-		line = holder(size, stor, line, &newline);
-	}
-	return (line);
-}
-
-char	*holder(long size, char *stor, char *line, int *nl)
-{
-	int		max;
-	char	*hold;
-	int		i;
-
-	i = 0;
-	max = BUFFER_SIZE;
-	hold = NULL;
-	if (line != NULL)
-		while (line[i] != '\0')
-			i++;
-	if (!(has_new_line(stor) == 0))
-	{
-		max = has_new_line(stor);
-		*nl = 1;
-	}
-	size -= (BUFFER_SIZE - max) - *nl;
-	hold = malloc(sizeof(char) * (size + i + 1));
-	if (!hold)
-		return (NULL);
-	filler(hold, line);
-	adder(hold, stor);
-	free(line);
-	return (hold);
-}
-
-void	adder(char *base, char *to_add)
+int	str_length(char *str)
 {
 	int	i;
-	int	j;
 
+	if (!str)
+		return (0);
 	i = 0;
-	j = 0;
-	while (base[i] != '\0')
+	while (str[i] != '\0' && str[i] != '\n')
 		i++;
-	while (to_add[j] != '\0' && to_add[j] != '\n')
-	{
-		base[i + j] = to_add[j];
-		j++;
-	}
-	if (to_add[j] == '\n')
-	{
-		base[i + j] = '\n';
-		base[i + j + 1] = '\0';
-	}
-	else
-		base[i + j] = '\0';
+	if (str[i] == '\n')
+		return (i + 1);
+	return (i);
 }
 
-char	*filler(char *to_fill, char *fill)
+int	eraser(char *str, int bsize)
 {
 	int	i;
 
 	i = 0;
-	if (fill == NULL)
+	while (bsize > 0)
 	{
-		*to_fill = '\0';
-		return (to_fill);
-	}
-	while (fill[i] != '\0')
-	{
-		to_fill[i] = fill[i];
+		str[i] = '\0';
+		bsize--;
 		i++;
 	}
-	to_fill[i] = '\0';
-	return (to_fill);
-}
-
-int	has_new_line(char	*ptr)
-{
-	int	i;
-
-	i = 0;
-	if (ptr != 0)
-	{
-		while (ptr[i] != '\0')
-		{
-			if (ptr[i] == '\n')
-				return (i + 1);
-			i++;
-		}
-	}
-	return (0);
+	return (1);
 }

@@ -28,5 +28,7 @@ char	*holder(long size, char *stor, char *line, int *nl);
 char	*filler(char *to_fill, char *fill);
 void	adder(char *base, char *to_add);
 int		has_new_line(char	*ptr);
+int		str_length(char *str);
+int		eraser(char *str, int bsize);
 
 #endif

@@ -21,7 +21,7 @@ int	main(void)
 
 	i = 3;
 	fd = open("test.txt", O_RDONLY);
-	while (i)
+	while (1)
 	{
 		line = get_next_line(fd);
 		if (line == NULL)
