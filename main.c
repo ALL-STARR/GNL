@@ -19,7 +19,7 @@ int	main(void)
 	char	*line;
 	int		i;
 
-	i = 3;
+	i = 10;
 	fd = open("test.txt", O_RDONLY);
 	while (1)
 	{

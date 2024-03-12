@@ -30,9 +30,9 @@ char	*read_store(char *stor, int fd, int	*nf)
 		red = (int)read(fd, stor, BUFFER_SIZE);
 		if (red == 0)
 			return (line);
-		if (red < 0 && eraser(stor, BUFFER_SIZE))
+		if ((red < 0 && eraser(stor, BUFFER_SIZE)))
 			return (NULL);
-		size += red;
+		size += str_length(stor);
 		stor[red] = '\0';
 		line = holder(size, stor, line, &newline);
 		if (!line)
@@ -53,11 +53,7 @@ char	*holder(long size, char *stor, char *lin, int *nl)
 	if (lin != NULL)
 		i = str_length(lin);
 	if (has_new_line(stor))
-	{
-		max = has_new_line(stor);
 		*nl = 1;
-	}
-	size -= max;
 	hold = malloc(sizeof(char) * (size + i + 1));
 	if (!hold)
 		return (NULL);
@@ -111,22 +107,12 @@ char	*filler(char *to_fill, char *fill)
 
 int	has_new_line(char	*ptr)
 {
-	int	i;
 	int	j;
 
-	i = 0;
 	j = 0;
-	if (ptr != 0)
-	{
-		while (ptr[i] != '\0')
-			i++;
-		while (i > 0 && ptr[i] != '\n')
-		{
-			i--;
-			j++;
-		}
-		if (ptr[i] == '\n')
-			return (j + 1);
-	}
+	while (ptr[j] != '\n' && ptr[j] != '\0')
+		j++;
+	if (ptr[j] == '\n')
+		return (1);
 	return (0);
 }
