@@ -22,7 +22,7 @@ char	*read_store(char *stor, int fd, int	*nf)
 	size = 0;
 	newline = 0;
 	line = NULL;
-	if (*nf && red > 0)
+	if (*nf && red > 0 && stor[0])
 		line = holder(BUFFER_SIZE, stor, line, &newline);
 	*nf = 1;
 	while (red > 0 && newline == 0)

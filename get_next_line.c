@@ -22,11 +22,15 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, line, 0) < 0)
 	{
 		eraser(stored, BUFFER_SIZE);
+		not_first = 0;
 		return (NULL);
 	}
 	line = read_store(stored, fd, &not_first);
 	if (!line)
+	{
+		not_first = 0;
 		return (NULL);
+	}
 	filler(stored, stored + str_length(stored));
 	return (line);
 }
