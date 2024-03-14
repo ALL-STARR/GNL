@@ -14,18 +14,17 @@
 
 char	*read_store(char *stor, int fd, int	*nf)
 {
-	static int		red = 1;
-	long			size;
-	char			*line;
-	int				newline;
+	int		red;
+	long	size;
+	char	*line;
 
 	size = 0;
-	newline = 0;
 	line = NULL;
+	red = 1;
 	if (*nf && red > 0 && stor[0])
-		line = holder(BUFFER_SIZE, stor, line, &newline);
+		line = holder(BUFFER_SIZE, stor, line, &red);
 	*nf = 1;
-	while (red > 0 && newline == 0)
+	while (red > 0)
 	{
 		red = (int)read(fd, stor, BUFFER_SIZE);
 		if (red == 0)
@@ -34,7 +33,7 @@ char	*read_store(char *stor, int fd, int	*nf)
 			return (NULL);
 		size += str_length(stor);
 		stor[red] = '\0';
-		line = holder(size, stor, line, &newline);
+		line = holder(size, stor, line, &red);
 		if (!line)
 			return (NULL);
 	}
@@ -53,7 +52,7 @@ char	*holder(long size, char *stor, char *lin, int *nl)
 	if (lin != NULL)
 		i = str_length(lin);
 	if (has_new_line(stor))
-		*nl = 1;
+		*nl = -1;
 	hold = malloc(sizeof(char) * (size + i + 1));
 	if (!hold)
 		return (NULL);
