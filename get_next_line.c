@@ -16,9 +16,10 @@ char	*get_next_line(int fd)
 {
 	static char	stored[BUFFER_SIZE + 1];
 	char		*line;
-	static int	not_first = 0;
+	int			not_first;
 
 	line = NULL;
+	not_first = str_length(stored);
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, line, 0) < 0)
 	{
 		eraser(stored, BUFFER_SIZE);
@@ -26,7 +27,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	line = read_store(stored, fd, &not_first);
-	if (!line)
+	if (!line && eraser(stored, BUFFER_SIZE))
 	{
 		not_first = 0;
 		return (NULL);
@@ -54,7 +55,7 @@ int	eraser(char *str, int bsize)
 	int	i;
 
 	i = 0;
-	while (bsize > 0)
+	while (bsize >= 0)
 	{
 		str[i] = '\0';
 		bsize--;

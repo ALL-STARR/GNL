@@ -21,15 +21,15 @@ char	*read_store(char *stor, int fd, int	*nf)
 	size = 0;
 	line = NULL;
 	red = 1;
-	if (*nf && red > 0 && stor[0])
-		line = holder(BUFFER_SIZE, stor, line, &red);
+	if (*nf && stor[0])
+		line = holder(str_length(stor), stor, line, &red);
 	*nf = 1;
 	while (red > 0)
 	{
 		red = (int)read(fd, stor, BUFFER_SIZE);
-		if (red == 0)
+		if (red == 0 && eraser(stor, BUFFER_SIZE))
 			return (line);
-		if ((red < 0 && eraser(stor, BUFFER_SIZE)))
+		if (red < 0 && eraser(stor, BUFFER_SIZE))
 			return (NULL);
 		size += str_length(stor);
 		stor[red] = '\0';
@@ -58,7 +58,12 @@ char	*holder(long size, char *stor, char *lin, int *nl)
 		return (NULL);
 	filler(hold, lin);
 	adder(hold, stor);
-	free(lin);
+	if (lin != NULL)
+	{
+		eraser(lin, str_length(lin));
+		free(lin);
+	}
+	lin = NULL;
 	return (hold);
 }
 
