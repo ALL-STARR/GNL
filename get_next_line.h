@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: thomvan- <thomvan-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/15 16:28:00 by marvin            #+#    #+#             */
-/*   Updated: 2024/02/15 16:28:00 by marvin           ###   ########.fr       */
+/*   Created: 2024/03/20 17:25:14 by thomvan-          #+#    #+#             */
+/*   Updated: 2024/03/20 17:25:14 by thomvan-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,11 @@
 
 # include <unistd.h>
 # include <stdlib.h>
-# include <stdio.h>
+# ifdef BUFFER_SIZE 
+#  if BUFFER_SIZE >= 2147483647 || BUFFER_SIZE < 0
+#   undef BUFFER_SIZE
+#  endif
+# endif
 
 # ifndef BUFFER_SIZE
 
@@ -30,5 +34,6 @@ void	adder(char *base, char *to_add);
 int		has_new_line(char	*ptr);
 int		str_length(char *str);
 int		eraser(char *str, int bsize);
+char	*reader(int fd, char *buff, int *rd);
 
 #endif

@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: thomvan- <thomvan-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/13 15:23:38 by marvin            #+#    #+#             */
-/*   Updated: 2024/02/13 15:23:38 by marvin           ###   ########.fr       */
+/*   Created: 2024/03/20 17:25:03 by thomvan-          #+#    #+#             */
+/*   Updated: 2024/03/20 17:25:03 by thomvan-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*read_store(char *stor, int fd, int	*nf)
+char	*read_store(char *stor, int fd, int *nf)
 {
 	int		red;
 	long	size;
@@ -22,17 +22,15 @@ char	*read_store(char *stor, int fd, int	*nf)
 	line = NULL;
 	red = 1;
 	if (*nf && stor[0])
+	{
 		line = holder(str_length(stor), stor, line, &red);
-	*nf = 1;
+		size += str_length(line);
+	}
 	while (red > 0)
 	{
-		red = (int)read(fd, stor, BUFFER_SIZE);
-		if (red == 0 && eraser(stor, BUFFER_SIZE))
+		if (reader(fd, stor, &red) == NULL)
 			return (line);
-		if (red < 0 && eraser(stor, BUFFER_SIZE))
-			return (NULL);
 		size += str_length(stor);
-		stor[red] = '\0';
 		line = holder(size, stor, line, &red);
 		if (!line)
 			return (NULL);
@@ -42,18 +40,12 @@ char	*read_store(char *stor, int fd, int	*nf)
 
 char	*holder(long size, char *stor, char *lin, int *nl)
 {
-	long		max;
-	char		*hold;
-	long		i;
+	char	*hold;
 
-	i = 0;
-	max = 0;
 	hold = NULL;
-	if (lin != NULL)
-		i = str_length(lin);
 	if (has_new_line(stor))
 		*nl = -1;
-	hold = malloc(sizeof(char) * (size + i + 1));
+	hold = malloc(sizeof(char) * (size + 1));
 	if (!hold)
 		return (NULL);
 	filler(hold, lin);
@@ -109,7 +101,7 @@ char	*filler(char *to_fill, char *fill)
 	return (to_fill);
 }
 
-int	has_new_line(char	*ptr)
+int	has_new_line(char *ptr)
 {
 	int	j;
 

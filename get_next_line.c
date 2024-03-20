@@ -3,12 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: thomvan- <thomvan-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/13 15:23:38 by marvin            #+#    #+#             */
-/*   Updated: 2024/02/13 15:23:38 by marvin           ###   ########.fr       */
+/*   Created: 2024/03/20 17:25:21 by thomvan-          #+#    #+#             */
+/*   Updated: 2024/03/20 17:25:21 by thomvan-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "get_next_line.h"
 
 #include "get_next_line.h"
 
@@ -23,15 +25,11 @@ char	*get_next_line(int fd)
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, line, 0) < 0)
 	{
 		eraser(stored, BUFFER_SIZE);
-		not_first = 0;
 		return (NULL);
 	}
 	line = read_store(stored, fd, &not_first);
 	if (!line && eraser(stored, BUFFER_SIZE))
-	{
-		not_first = 0;
 		return (NULL);
-	}
 	filler(stored, stored + str_length(stored));
 	return (line);
 }
@@ -62,4 +60,15 @@ int	eraser(char *str, int bsize)
 		i++;
 	}
 	return (1);
+}
+
+char	*reader(int fd, char *buff, int *rd)
+{
+	*rd = read(fd, buff, BUFFER_SIZE);
+	buff[*rd] = '\0';
+	if (*rd == 0 && eraser(buff, BUFFER_SIZE))
+		return (NULL);
+	if (*rd < 0 && eraser(buff, BUFFER_SIZE))
+		return (NULL);
+	return (buff);
 }
